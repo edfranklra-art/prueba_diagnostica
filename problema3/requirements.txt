@@ -1,0 +1,4 @@
+# Este proyecto utiliza la librería estándar de Python 3.
+# No se requieren paquetes externos adicionales.
+
+python>=3.6

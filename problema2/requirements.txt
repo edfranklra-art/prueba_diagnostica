@@ -1,0 +1,2 @@
+# No se requieren librerías externas para este script.
+# Se utiliza la librería estándar 're' de Python.

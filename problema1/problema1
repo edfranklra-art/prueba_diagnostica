@@ -1,0 +1,63 @@
+import re
+
+def analizar_expresion():
+    print("--- Analizador de Expresiones Aritméticas ---")
+    print("Escriba 'salir' para finalizar el programa.\n")
+
+    while True:
+        cadena = input("Introduce la expresión: ")
+        
+        if cadena.lower() == 'salir':
+            print("Programa finalizado.")
+            break
+
+        # Definición de patrones (Regex)
+        patrones = [
+            ('NUMERO',    r'\d+(\.\d+)?'),       
+            ('OPERANDO',  r'[a-zA-Z_][\w]*'),     
+            ('OPERADOR',  r'[\+\-\*/]'),          
+            ('PAREN_IZQ', r'\('),
+            ('PAREN_DER', r'\)'),
+            ('ESPACIO',   r'\s+'),                
+        ]
+        
+        regex_completa = '|'.join(f'(?P<{nombre}>{patron})' for nombre, patron in patrones)
+        
+        tokens = []
+        balance = 0
+        error_encontrado = False
+        posicion_error = -1
+
+        # Analizar la cadena
+        idx = 0
+        while idx < len(cadena):
+            match = re.match(regex_completa, cadena[idx:])
+            if match:
+                tipo = match.lastgroup
+                valor = match.group(tipo)
+                
+                if tipo != 'ESPACIO':
+                    tokens.append(f"{tipo} {valor}")
+                    if tipo == 'PAREN_IZQ': balance += 1
+                    if tipo == 'PAREN_DER': balance -= 1
+                
+                idx += match.end()
+            else:
+                # Si no coincide con nada, es un ERROR
+                tokens.append(f"ERROR {cadena[idx]}")
+                error_encontrado = True
+                idx += 1 # Avanzar para seguir analizando
+
+        # Construir la salida
+        resultado = " ".join(tokens)
+        
+        # Verificar balance solo si no hay errores críticos de símbolos
+        if balance == 0:
+            resultado += " PARÉNTESIS BALANCEADOS."
+        else:
+            resultado += " PARÉNTESIS NO BALANCEADOS."
+            
+        print(f"Salida: {resultado}\n")
+
+if __name__ == "__main__":
+    analizar_expresion()
